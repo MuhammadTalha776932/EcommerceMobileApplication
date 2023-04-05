@@ -45,7 +45,7 @@ export const ProductsList: React.FC<ProductsListProps> = ({
         data={products}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={1}
+        numColumns={2}
         contentContainerStyle={styles.list}
         onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={handleScrollEndDrag}

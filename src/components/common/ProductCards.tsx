@@ -17,10 +17,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onPress,
   disableTouchableOpacity,
 }) => {
+  const url = "https://api.retailync.com/public/"
   return (
-    <TouchableOpacity onPress={onPress} disabled={disableTouchableOpacity ? true: false}>
+    <TouchableOpacity onPress={onPress} disabled={disableTouchableOpacity ? true : false}>
       <Box style={styles.container}>
-        <Image source={{ uri: image }} alt={name} style={styles.image} />
+        <Image source={{ uri: url + image.toString() }} alt={""} style={styles.image} />
         <Text style={styles.name}>{name}</Text>
       </Box>
     </TouchableOpacity>

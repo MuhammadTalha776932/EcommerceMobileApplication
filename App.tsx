@@ -1,17 +1,15 @@
 import 'react-native-gesture-handler';
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { NativeBaseProvider, extendTheme, ColorMode } from "native-base"; //? 1. import `NativeBaseProvider` component
 import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaView } from "react-native"
 import type { StorageManager } from "native-base";
-import MainScreen from "./src/screens/MainScreen";
-
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import SignInForm from "./src/screens/Signin.form";
+import RootContaienr from './src/components/RootContainer';
 
 // * 3. Extend the theme to include custom colors, fonts, etc.
 const CollectionsOfColorTheme = {
@@ -46,15 +44,14 @@ const queryClient = new QueryClient()
 
 
 const App = () => {
+  axios.defaults.baseURL = "https://api.retailync.com/api"
+
   //? 2. Use at the root of your app
   return (
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
       <QueryClientProvider client={queryClient}>
         <NavigationContainer>
-          <SafeAreaView style={{ flex: 1 }}>
-            {/* <MainScreen /> */}
-            <SignInForm title="Sign In" placeholder={["Email","Password"]} buttonText="Sign In"/>
-          </SafeAreaView>
+          <RootContaienr/>
         </NavigationContainer>
       </QueryClientProvider>
     </NativeBaseProvider>

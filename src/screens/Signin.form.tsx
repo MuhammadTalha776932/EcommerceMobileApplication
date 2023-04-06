@@ -7,6 +7,7 @@ import { StackScreenNameProvider } from '../utils/StackScreenNameProvider.utils'
 import { SignUpPostConfig } from '../constants/SignUp.constants';
 import { Logger } from '../constants/Logger.constants';
 import { UserEmailAndPasswordContext } from '../utils/UserEmailAndPasswordContext';
+
 interface ISignInForm {
   title: string;
   placeholder: Array<string>;
@@ -30,8 +31,8 @@ type handleReturnType = {
 } | undefined
 
 const SignInForm = ({ title, placeholder, buttonText, options }: ISignInForm) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('testinglive@gmail.com');
+  const [password, setPassword] = useState('12345678');
 
   const { contextEmail, contextPassword, setContextEmail, setContextPassword } = React.useContext(UserEmailAndPasswordContext);
 

@@ -15,37 +15,38 @@ interface ProductDetailsProps {
 export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   const url = "https://api.retailync.com/public/"
   const handleSetLocalStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const email = await AsyncStorage.getItem('email');
-      const password = await AsyncStorage.getItem('password');
 
-      Logger("token", token)
-      Logger("email", email)
-      Logger("password", password)
+    const token = await AsyncStorage.getItem('token');
+    const email = await AsyncStorage.getItem('email');
+    const password = await AsyncStorage.getItem('password');
 
-      if (email?.length !== 0 && password?.length !== 0 && token?.length !== 0) {
-        let response = await axios.post("/user/logout", { email: email, password: password }, {
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "*/*",
-            Authorization: `Bearer ${token}`
-          }
-        })
+    Logger("token", token)
+    Logger("email", email)
+    Logger("password", password)
 
-        if (response.data?.error?.includes("Unauthorized")) {
-          // Alert.alert("Unauthorized", response.data.error);
-          console.error(response.data);
-          return;
+    if (email?.length !== 0 && password?.length !== 0 && token?.length !== 0) {
+      await axios.post("/user/logout", { email: email, password: password }, {
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "*/*",
+          Authorization: `Bearer ${token}`
         }
-
-        // Alert.alert("Message", response.data)
-      } else {
-        console.warn("email, password, and token doesn't exist at localstorage");
-      }
-    } catch (error) {
-      console.log(error);
+      }).then((response) => {
+        Alert.alert("Message", `${response.data?.message}`);
+        AsyncStorage.removeItem("token");
+        console.info("token removed successfully");
+      })
+        .catch((error) => {
+          if (error.response.data?.error?.includes("Unauthorized")) {
+            let statusMessage: string = error.response.data?.error;
+            Alert.alert("Message", statusMessage)
+          }
+          console.warn(error.response.data?.error);
+        })
+    } else {
+      console.warn("email, password, and token doesn't exist at localstorage");
     }
+
   }
   return (
     <Box style={styles.container}>

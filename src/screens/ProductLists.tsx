@@ -28,40 +28,30 @@ export const ProductsList: React.FC<ProductsListProps> = ({
     />
   );
 
-
-
-  const handleScrollBeginDrag = () => {
-    setDisableTouchableOpacity(true);
-  };
-
-  const handleScrollEndDrag = () => {
-    setDisableTouchableOpacity(false);
-  };
-
   return (
     <Box style={styles.container}>
-      <FlatList
-        showsHorizontalScrollIndicator={true}
-        data={products}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={1}
-        contentContainerStyle={styles.list}
-        onScrollBeginDrag={handleScrollBeginDrag}
-        onScrollEndDrag={handleScrollEndDrag}
-      />
+      <ScrollView style={styles.list}>
+        {
+          products.map((productItems: Product, index: number) => {
+            return <React.Fragment key={productItems.id}>
+              {renderItem({ item: productItems })}
+            </React.Fragment>;
+          })
+        }
+      </ScrollView>
+
     </Box>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 1,
     backgroundColor: '#f2f2f2',
     padding: 8,
   },
   list: {
-    flexGrow: 2,
-    justifyContent: 'space-between',
+    flexGrow: 1,
+    // justifyContent: 'space-between',
   },
 });

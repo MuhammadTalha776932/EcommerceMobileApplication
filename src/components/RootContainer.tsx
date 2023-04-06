@@ -25,12 +25,21 @@ export function RootContaienr(props: AppProps) {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Stack.Navigator
-                initialRouteName={data ? StackScreenNameProvider.Home : StackScreenNameProvider.Auth}
+                // initialRouteName={data ? StackScreenNameProvider.Home : StackScreenNameProvider.Auth}
                 screenOptions={({ navigation, route }) => ({ headerShown: false })}
 
             >
-                <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
-                <Stack.Screen name={StackScreenNameProvider.Auth} component={AuthNavigationStack} />
+                {
+                    data ? (<Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />) : null
+                }
+                {
+                    !data ? (
+                        <Stack.Group>
+                            <Stack.Screen name={StackScreenNameProvider.Auth} component={AuthNavigationStack} />
+                            <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
+                        </Stack.Group>
+                    ) : null
+                }
             </Stack.Navigator>
         </SafeAreaView>
     );

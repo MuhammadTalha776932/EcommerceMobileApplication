@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, ScrollView, VirtualizedList } from 'react-native';
+import { StyleSheet, FlatList, ScrollView, Text } from 'react-native';
 import { Box } from 'native-base';
 
 import ProductCard from '../components/common/ProductCards';
@@ -17,7 +17,7 @@ export const ProductsList: React.FC<ProductsListProps> = ({
 }) => {
 
   const [disableTouchableOpacity, setDisableTouchableOpacity] = React.useState<boolean>(false);
-  
+
   const renderItem = ({ item }: { item: Product }) => (
     <ProductCard
       id={item?.id.toString()}
@@ -45,7 +45,7 @@ export const ProductsList: React.FC<ProductsListProps> = ({
         data={products}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
+        numColumns={1}
         contentContainerStyle={styles.list}
         onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={handleScrollEndDrag}
@@ -56,12 +56,12 @@ export const ProductsList: React.FC<ProductsListProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     backgroundColor: '#f2f2f2',
     padding: 8,
   },
   list: {
-    flexGrow: 1,
-    // justifyContent: 'space-between',
+    flexGrow: 2,
+    justifyContent: 'space-between',
   },
 });

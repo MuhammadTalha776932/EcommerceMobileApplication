@@ -1,14 +1,52 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Box, Image, Text, VStack } from 'native-base';
 import { Product } from '../assets/apis/Product.data';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { Logger } from '../constants/Logger.constants';
 interface ProductDetailsProps {
   product: Product;
   onBack: () => void;
 }
 
+
+
 export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack }) => {
   const url = "https://api.retailync.com/public/"
+  const handleSetLocalStorage = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const email = await AsyncStorage.getItem('email');
+      const password = await AsyncStorage.getItem('password');
+
+      Logger("token", token)
+      Logger("email", email)
+      Logger("password", password)
+
+      if (email?.length !== 0 && password?.length !== 0 && token?.length !== 0) {
+        let response = await axios.post("/user/logout", { email: email, password: password }, {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (response.data?.error?.includes("Unauthorized")) {
+          // Alert.alert("Unauthorized", response.data.error);
+          console.error(response.data);
+          return;
+        }
+
+        // Alert.alert("Message", response.data)
+      } else {
+        console.warn("email, password, and token doesn't exist at localstorage");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <Box style={styles.container}>
       <Image source={{ uri: url + product.product_image }} alt={product.product_name} style={styles.image} />
@@ -22,6 +60,9 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack 
           <Text style={styles.backButtonText}>Back to List</Text>
         </TouchableOpacity>
       </Box>
+      <TouchableOpacity style={styles.backButton} onPress={handleSetLocalStorage}>
+        <Text style={styles.backButtonText}>Sign Out</Text>
+      </TouchableOpacity>
     </Box>
   );
 };

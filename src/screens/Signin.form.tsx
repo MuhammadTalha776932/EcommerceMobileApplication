@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackScreenNameProvider } from '../utils/StackScreenNameProvider.utils';
 import { SignUpPostConfig } from '../constants/SignUp.constants';
 import { Logger } from '../constants/Logger.constants';
+import { UserEmailAndPasswordContext } from '../utils/UserEmailAndPasswordContext';
 interface ISignInForm {
   title: string;
   placeholder: Array<string>;
@@ -31,6 +32,8 @@ type handleReturnType = {
 const SignInForm = ({ title, placeholder, buttonText, options }: ISignInForm) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { contextEmail, contextPassword, setContextEmail, setContextPassword } = React.useContext(UserEmailAndPasswordContext);
 
   const navigation = useNavigation();
 
@@ -64,12 +67,36 @@ const SignInForm = ({ title, placeholder, buttonText, options }: ISignInForm) =>
         return response.data;
 
       } else {
-        Alert.alert("Plz Enter Email and Password", "Plz nnter your email and password kindly.");
+        Alert.alert("Plz Enter Email and Password", "Plz enter your email and password kindly.");
       }
     } catch (error: any) {
       Alert.alert("Error", `${error?.message}`)
     }
   }
+  Logger("Context Store Email", contextEmail);
+  const InsertIntoLocalStorage = async (email: string, password: string) => {
+    try {
+
+      const localEmail = await AsyncStorage.getItem('email');
+      const localPassword = await AsyncStorage.getItem('password');
+
+      if (localEmail !== null && localPassword !== null) {
+        await AsyncStorage.multiRemove(["email,password"]);
+        await AsyncStorage.setItem("email", email);
+        await AsyncStorage.setItem("password", password);
+      }
+      else {
+
+        await AsyncStorage.setItem("email", email);
+        await AsyncStorage.setItem("password", password);
+      }
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
 
   //* Function to handle form submission
   const handleSignIn = async ({ email, password }: ISignUpData) => {
@@ -77,17 +104,26 @@ const SignInForm = ({ title, placeholder, buttonText, options }: ISignInForm) =>
       //? SignIn EndPoint called here.
       if (screenIdentifier.includes(StackScreenNameProvider.SignIn)) {
         const returnData = await handleTheSignInMethod(email, password)
-        let token: string = await returnData?.token;
-        await (token.length !== 0 && AsyncStorage.setItem("token", token))
+        let token: string = await returnData?.token || "";
 
-        token.length !== 0 && navigation.navigate(StackScreenNameProvider.Home as never);
+        if (token) {
+          await (token?.length !== 0 && AsyncStorage.setItem("token", token))
 
-        // Logger("Here is Sign in response", JSON.stringify(token));
+          token?.length !== 0 && navigation.navigate(StackScreenNameProvider.Home as never);
+
+          Logger("Here is Sign in response", JSON.stringify(token));
+          token?.length !== 0 && setContextEmail !== null && setContextEmail(email);
+          token?.length !== 0 && setContextPassword !== null && setContextPassword(password);
+          token?.length !== 0 && InsertIntoLocalStorage(email, password);
+        }else{
+          Alert.alert(" Unauthorized", `token doesn't exist again sign in to get one`);
+        }
+
       };
       // if (screenIdentifier.includes(StackScreenNameProvider.SignUp)) handleTheSignUpMethod(email, password);
 
     } catch (error: any) {
-      Alert.alert("Error Occured in the handleSignIn", `${error?.message}`);
+      Alert.alert("Error Occured in the handleSignIn", `${error}`);
     }
   };
 

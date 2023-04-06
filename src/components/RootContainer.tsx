@@ -29,12 +29,8 @@ export function RootContaienr(props: AppProps) {
                 screenOptions={({ navigation, route }) => ({ headerShown: false })}
 
             >
-                <Stack.Screen name={StackScreenNameProvider.Home} children={
-                    () => <MainScreen />
-                } />
-                <Stack.Screen name={StackScreenNameProvider.Auth} children={
-                    () => <AuthNavigationStack />
-                } />
+                <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
+                <Stack.Screen name={StackScreenNameProvider.Auth} component={AuthNavigationStack} />
             </Stack.Navigator>
         </SafeAreaView>
     );

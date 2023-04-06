@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, Alert } from 'react-native';
 import { Box, Spinner, View } from 'native-base';
 import { Product } from '../assets/apis/Product.data';
 import { ProductsList } from './ProductLists';
@@ -27,12 +27,13 @@ const MainScreen = () => {
         Authorization: `Bearer ${token}`
       }
     })
+    console.log(response.data);
     return response.data.product_list;
   }
 
 
 
-  const { isError, isLoading, data, isSuccess, isFetched } = useQuery({ queryKey: ['product'], queryFn: getProductList })
+  const { isError, isLoading, data, isSuccess, isFetched, error } = useQuery({ queryKey: ['product'], queryFn: getProductList })
 
 
   const handlePressProduct = (productId: string) => {
@@ -40,13 +41,21 @@ const MainScreen = () => {
     setSelectedProduct(product || null);
   };
 
+  console.log(error);
+
   const handleBackToList = () => {
     setSelectedProduct(null);
   };
 
   if (isLoading) return (<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Spinner color='blue' size={20}/>
+    <Spinner color='blue' size={20} />
   </View>)
+
+  if (isError) return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Error</Text>
+    </View>
+  )
 
   return (
     <Box style={styles.container}>

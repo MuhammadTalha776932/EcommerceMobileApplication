@@ -10,6 +10,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import RootContaienr from './src/components/RootContainer';
+import { UserEmailAndPasswordContextProvider } from './src/utils/UserEmailAndPasswordContext';
 
 // * 3. Extend the theme to include custom colors, fonts, etc.
 const CollectionsOfColorTheme = {
@@ -51,7 +52,9 @@ const App = () => {
     <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
       <QueryClientProvider client={queryClient}>
         <NavigationContainer>
-          <RootContaienr/>
+          <UserEmailAndPasswordContextProvider>
+            <RootContaienr />
+          </UserEmailAndPasswordContextProvider>
         </NavigationContainer>
       </QueryClientProvider>
     </NativeBaseProvider>

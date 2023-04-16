@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { Box, Image, Text } from 'native-base';
+import Animated, { Layout } from 'react-native-reanimated';
 
 interface ProductCardProps {
   id: string;
@@ -18,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   disableTouchableOpacity,
 }) => {
   const url = "https://api.retailync.com/public/";
-  let {width,height} = useWindowDimensions();
+  let { width, height } = useWindowDimensions();
 
   const styles = StyleSheet.create({
     container: {
@@ -29,8 +30,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       margin: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: width * 5/12,
-      maxHeight: height * 5/12,
+      minHeight: width * 5 / 12,
+      maxHeight: height * 5 / 12,
     },
     image: {
       flex: 1,
@@ -47,14 +48,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
   });
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} disabled={disableTouchableOpacity ? true : false}>
-      <Box
-      // style={styles.container}
-      >
-        <Image source={{ uri: url + image.toString() }} alt={""} style={styles.image} />
-        <Text style={styles.name}>{name}</Text>
-      </Box>
-    </TouchableOpacity>
+    <View>
+      <TouchableOpacity style={styles.container} onPress={onPress} disabled={disableTouchableOpacity ? true : false}>
+        <Box
+        // style={styles.container}
+        >
+          <Image source={{ uri: image?.toString() }} alt={""} style={styles.image} />
+          <Text style={styles.name}>{name}</Text>
+        </Box>
+      </TouchableOpacity>
+    </View>
 
   );
 };

@@ -3,6 +3,7 @@ import { StyleSheet, Text, Alert } from 'react-native';
 import { Box, Spinner, View } from 'native-base';
 import { Product } from '../assets/apis/Product.data';
 import { ProductsList } from './ProductLists';
+import { useFocusEffect } from '@react-navigation/native';
 import ProductDetails from './ProductDetails';
 import {
   useQuery,
@@ -11,6 +12,7 @@ import {
 
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppBar } from '../components/common/AppBar';
 
 
 // TODO: https://api.retailync.com/api/product/list called this API.
@@ -33,7 +35,13 @@ const MainScreen = () => {
 
 
 
-  const { isError, isLoading, data, isSuccess, isFetched, error } = useQuery({ queryKey: ['product'], queryFn: getProductList })
+  const { isError, isLoading, data, isSuccess, isFetched, error, refetch } = useQuery({ queryKey: ['product'], queryFn: getProductList })
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [])
+  );
 
 
   const handlePressProduct = (productId: string) => {
@@ -58,29 +66,23 @@ const MainScreen = () => {
   )
 
   return (
-    <Box style={styles.container}>
-      {
-        isSuccess && <>
-          {
-            selectedProduct ? (
-              <ProductDetails product={selectedProduct} onBack={handleBackToList} />
-            ) : (
-              <ProductsList products={data} onPressProduct={handlePressProduct} />
-            )}
-        </>
-
-      }
-
-    </Box>
+    <>
+      <AppBar />
+      <Box flex={1} justifyContent={"center"}>
+        {isSuccess && <>
+          {selectedProduct ? (
+            <ProductDetails product={selectedProduct} onBack={handleBackToList} />
+          ) : (
+            <ProductsList products={data} onPressProduct={handlePressProduct} />
+          )}
+        </>}
+      </Box>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    //   backgroundColor: '#fff',
-    // alignItems: 'center',
-    justifyContent: 'center',
 
   },
 });

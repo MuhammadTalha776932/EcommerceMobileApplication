@@ -7,6 +7,7 @@ import MainScreen from '../screens/MainScreen';
 import Stack from '../utils/Stack.utils';
 import { StackScreenNameProvider } from '../utils/StackScreenNameProvider.utils';
 import { View, Spinner } from 'native-base';
+import ProductFormScreen from '../screens/ProductForm';
 
 export interface AppProps {
 }
@@ -30,13 +31,19 @@ export function RootContaienr(props: AppProps) {
 
             >
                 {
-                    data ? (<Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />) : null
+                    data ? (
+                        <React.Fragment>
+                            <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
+                            <Stack.Screen name={StackScreenNameProvider.ProductForm} component={ProductFormScreen} />
+                        </React.Fragment>
+                    ) : null
                 }
                 {
                     !data ? (
                         <Stack.Group>
                             <Stack.Screen name={StackScreenNameProvider.Auth} component={AuthNavigationStack} />
                             <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
+                            <Stack.Screen name={StackScreenNameProvider.ProductForm} component={ProductFormScreen} />
                         </Stack.Group>
                     ) : null
                 }

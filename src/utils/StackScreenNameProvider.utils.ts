@@ -7,4 +7,5 @@ export const StackScreenNameProvider = {
     SignUp: "SignUp",
     Auth: "Auth",
     Home: "Home",
+    ProductForm:"ProductForm",
 }

@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query'
 import RootContaienr from './src/components/RootContainer';
 import { UserEmailAndPasswordContextProvider } from './src/utils/UserEmailAndPasswordContext';
+import DemoReanimated from './src/screens/Demo.Reanimated';
 
 // * 3. Extend the theme to include custom colors, fonts, etc.
 const CollectionsOfColorTheme = {
@@ -54,6 +55,7 @@ const App = () => {
         <NavigationContainer>
           <UserEmailAndPasswordContextProvider>
             <RootContaienr />
+            {/* <DemoReanimated/> */}
           </UserEmailAndPasswordContextProvider>
         </NavigationContainer>
       </QueryClientProvider>

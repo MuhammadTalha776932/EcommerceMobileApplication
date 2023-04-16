@@ -1,9 +1,10 @@
 import React from 'react';
+import RNRestart from 'react-native-restart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Box, Image, Text, VStack } from 'native-base';
 import { Product } from '../assets/apis/Product.data';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import { Logger } from '../constants/Logger.constants';
 interface ProductDetailsProps {
   product: Product;
@@ -32,7 +33,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack 
           Authorization: `Bearer ${token}`
         }
       }).then((response) => {
-        Alert.alert("Message", `${response.data?.message}`);
+        Alert.alert("Message", `${response.data?.message}`, [{ text: "OK", onPress: () => RNRestart.restart() }]);
         AsyncStorage.removeItem("token");
         console.info("token removed successfully");
       })
@@ -50,7 +51,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, onBack 
   }
   return (
     <Box style={styles.container}>
-      <Image source={{ uri: url + product.product_image }} alt={product.product_name} style={styles.image} />
+      <Image source={{ uri: product.product_image }} alt={product.product_name} style={styles.image} />
       <Box style={styles.details}>
         <Text style={styles.price}>{product.category_name} </Text>
         <Text style={styles.name}>{product.product_name}</Text>

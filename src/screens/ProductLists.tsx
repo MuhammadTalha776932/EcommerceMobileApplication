@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, ScrollView, Text, View,TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, FlatList, ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Box } from 'native-base';
 
 import ProductCard from '../components/common/ProductCards';
@@ -32,7 +32,7 @@ export const ProductsList: React.FC<ProductsListProps> = ({
       onPress={() => onPressProduct(item?.id.toString())}
     />
   );
-  
+
   const handleSetLocalStorage = async () => {
 
     const token = await AsyncStorage.getItem('token');
@@ -51,10 +51,9 @@ export const ProductsList: React.FC<ProductsListProps> = ({
           Authorization: `Bearer ${token}`
         }
       }).then((response) => {
-        Alert.alert("Message", `${response.data?.message}`);
+        Alert.alert("Message", `${response.data?.message}`, [{ text: "OK", onPress: () => RNRestart.restart() }]);
         AsyncStorage.removeItem("token");
         console.info("token removed successfully");
-        RNRestart.restart();
       })
         .catch((error) => {
           if (error.response.data?.error?.includes("Unauthorized")) {

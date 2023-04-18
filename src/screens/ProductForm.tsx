@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Button } from 'native-base';
+import { Box, Button, Center, CheckIcon, Select } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenNameProvider } from '../utils/StackScreenNameProvider.utils';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
@@ -14,7 +14,7 @@ import DropDownList from '../components/common/DropDownList.common';
 
 interface ProductForm {
   product_name: string;
-  product_image: FormData;
+  product_image?: object;
   category_name: string;
   sub_category_name: string;
   category_idFk: number;
@@ -36,33 +36,6 @@ const ProductDetailForm = () => {
 
   const [storeCategoryList, setStoreCategoryList] = useState([])
   const [storeSubategoryList, setStoreSubCategoryList] = useState([])
-
-  const onCategoryOpen = () => {
-    setSubCategoryOpen(false);
-  }
-
-  const onSubCategoryOpenOpen = () => {
-    setCategoryOpen(false);
-  }
-
-  // const pickImage = async () => {
-  //   try {
-  //     const result = await DocumentPicker.pickSingle({
-  //       type: [DocumentPicker.types.images],
-  //     });
-  //     setImage({ ...result });
-  //     console.log(
-  //       { ...result }
-  //     );
-  //   } catch (err) {
-  //     if (DocumentPicker.isCancel(err)) {
-  //       // User cancelled the picker
-  //     } else {
-  //       // Error!
-  //     }
-  //   }
-  // };
-
 
   React.useEffect(() => {
 
@@ -98,21 +71,18 @@ const ProductDetailForm = () => {
 
   }, [])
 
-
-  const { mutate, isLoading, isError, error } = useMutation(async (data: ProductForm) => {
+  const handlePostSubmittion = async (data) => {
     const token = await AsyncStorage.getItem("token");
-    console.log({ ...data });
-    return await axios.post('https://api.retailync.com/api/product/store', {
-      ...data
-    }, {
+    console.log(token)
+    await axios.post('https://api.retailync.com/api/product/store', data, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        // 'Content-Type': 'application/json',
         'Content-Type': 'multipart/form-data',
       }
     })
       .then(response => {
-        Alert.alert("Message", JSON.stringify(response.data), [
+        console.log(response.data?.Message);
+        Alert.alert("Message", JSON.stringify(response.data?.Message), [
           {
             text: "OK",
             onPress: () => {
@@ -120,15 +90,17 @@ const ProductDetailForm = () => {
             }
           }
         ]);
-        return response
+        return response.data
       })
       .catch((error) => {
+        console.log(error);
         let statusMessage = error?.response?.data;
+        console.log(error)
         console.log("error", statusMessage)
         Alert.alert("Message", JSON.stringify(statusMessage))
         return statusMessage;
       })
-  })
+  }
 
   const handleChoosePhoto = async () => {
 
@@ -170,18 +142,24 @@ const ProductDetailForm = () => {
       type: image?.assets[0]?.type,
       name: image?.assets[0]?.fileName,
     });
+    formData.append('product_name', productName)
+    formData.append('category_name', category)
+    formData.append('sub_category_name', subCategory)
+    formData.append('category_idFk', getCategoryID)
+    formData.append('sub_category_idFk', getSubCategoryID)
+
 
     let productForm: ProductForm = {
       product_name: productName,
-      product_image: formData,
+      // product_image: formData,
       category_name: category,
       sub_category_name: subCategory,
       category_idFk: getCategoryID,
-      sub_category_idFk: getSubCategoryID
+      sub_category_idFk: getSubCategoryID,
     }
 
     console.log(productForm);
-    mutate(productForm);
+    handlePostSubmittion(formData);
   };
 
   return (
@@ -192,8 +170,38 @@ const ProductDetailForm = () => {
         value={productName}
         onChangeText={setProductName}
       />
-      <DropDownList label='Category' selectedCategoryOrSubCategory={category} setSelectedCategoryOrSubCategory={setCategory} store={storeCategoryList} />
-      <DropDownList label='Sub Category' selectedCategoryOrSubCategory={subCategory} setSelectedCategoryOrSubCategory={setSubCategory} store={storeSubategoryList} />
+
+      <Text style={styles.label}>Category</Text>
+      <Center>
+        <Box>
+          <Select selectedValue={category} minWidth="100%" accessibilityLabel="Category" placeholder="Category" _selectedItem={{
+            bg: "teal.600",
+            endIcon: <CheckIcon size="5" />
+          }} mt={1} onValueChange={itemValue => { setCategory(itemValue); console.log("selected Category", itemValue) }}>
+            {
+              storeCategoryList.map((categoriesItems, index: number) => (
+                <Select.Item key={index} label={categoriesItems?.category_name} value={categoriesItems?.category_name} />
+              ))
+            }
+          </Select>
+        </Box>
+      </Center>
+      <Text style={styles.label}>Sub Category</Text>
+      <Center>
+        <Box >
+          <Select selectedValue={subCategory} minWidth="100%" mb={10} accessibilityLabel="SubCategory" placeholder="SubCategory" _selectedItem={{
+            bg: "teal.600",
+            endIcon: <CheckIcon size="5" />
+          }} mt={1} onValueChange={itemValue => setSubCategory(itemValue)}>
+            {
+              storeSubategoryList.map((subCategoriesItems, index: number) => (
+                <Select.Item key={index} label={subCategoriesItems?.sub_category_name} value={subCategoriesItems?.sub_category_name} />
+              ))
+            }
+          </Select>
+        </Box>
+      </Center>
+
       <Button marginY={5} onPress={handleChoosePhoto} >Select Image</Button>
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Done</Text>

@@ -13,7 +13,7 @@ export interface AppProps {
 }
 
 export function RootContaienr(props: AppProps) {
-    const { data, isLoading, isError, isSuccess } = useQuery({
+    const { data:token, isLoading, isError, isSuccess } = useQuery({
         queryKey: ["token"], queryFn: async () => {
             const token = await AsyncStorage.getItem("token");
             return token?.length! == 0 || token !== null ? true : false;
@@ -31,7 +31,7 @@ export function RootContaienr(props: AppProps) {
 
             >
                 {
-                    data ? (
+                    token ? (
                         <React.Fragment>
                             <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />
                             <Stack.Screen name={StackScreenNameProvider.ProductForm} component={ProductFormScreen} />
@@ -39,7 +39,7 @@ export function RootContaienr(props: AppProps) {
                     ) : null
                 }
                 {
-                    !data ? (
+                    !token ? (
                         <Stack.Group>
                             <Stack.Screen name={StackScreenNameProvider.Auth} component={AuthNavigationStack} />
                             <Stack.Screen name={StackScreenNameProvider.Home} component={MainScreen} />

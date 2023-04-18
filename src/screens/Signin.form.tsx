@@ -64,7 +64,11 @@ const SignInForm = ({ title, placeholder, buttonText, options }: ISignInForm) =>
         password: password,
       }
 
-      return await axios.post("/user/login", PostData)
+      return await axios.post("/user/login", { ...PostData }, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
         .then(({ data, status, statusText }) => {
           return data;
         })
